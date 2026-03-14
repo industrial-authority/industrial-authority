@@ -1,0 +1,33 @@
+name: Flutterwave Webhook Handler
+
+on:
+  repository_dispatch:
+    types: [flutterwave-webhook]
+
+jobs:
+  handle-payment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Process Flutterwave Event
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLUTTERWAVE_EVENT: ${{ github.event.client_payload.event }}
+        run: |
+          node scripts/handle-flutterwave-webhook.js
+
+      - name: Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "chore: flutterwave payment processed" || echo "No changes to commit"
+          git push || echo "Nothing to push"
