@@ -8,6 +8,8 @@ import { trpc } from "@/lib/trpc";
 import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "wouter";
+import { initializeFlutterwavePayment, generateTransactionRef } from "@/services/flutterwave";
+import { toast } from "sonner";
 
 export default function AuditRequest() {
   const [formData, setFormData] = useState<{
@@ -40,19 +42,64 @@ export default function AuditRequest() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form
+    if (!formData.companyName || !formData.companyEmail || !formData.industry) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     try {
+      // First save the audit request
       await createAuditMutation.mutateAsync(formData);
-      setSubmitted(true);
-      setFormData({
-        companyName: "",
-        companyEmail: "",
-        companyPhone: "",
-        companyWebsite: "",
-        industry: "",
-        auditType: "basic" as "basic" | "authority_engine" | "ongoing",
-      });
+      
+      // Get audit price
+      const prices: Record<string, number> = {
+        basic: 250,
+        authority_engine: 5000,
+        ongoing: 2500,
+      };
+      
+      const price = prices[formData.auditType] || 250;
+      const txRef = generateTransactionRef();
+      
+      // Initialize Flutterwave payment
+      const paymentPayload = {
+        tx_ref: txRef,
+        amount: price,
+        currency: "NGN",
+        payment_options: "card,ussd,bank_transfer,mobilemoney",
+        customer: {
+          email: formData.companyEmail,
+          phonenumber: formData.companyPhone || "0000000000",
+          name: formData.companyName,
+        },
+        customizations: {
+          title: "Industrial Authority",
+          description: `${formData.auditType.replace(/_/g, " ")} - ${formData.companyName}`,
+          logo: "https://industrial-authority.github.io/industrial-authority/assets/logo.png",
+        },
+        meta: {
+          auditType: formData.auditType,
+          companyName: formData.companyName,
+          industry: formData.industry,
+        },
+      };
+      
+      // Save audit data and trigger payment
+      localStorage.setItem('pendingAudit', JSON.stringify({
+        ...formData,
+        price,
+        txRef,
+        createdAt: new Date().toISOString(),
+      }));
+      
+      // Initialize payment
+      initializeFlutterwavePayment(paymentPayload);
+      
     } catch (error) {
       console.error("Error submitting audit request:", error);
+      toast.error("Failed to process request");
     }
   };
 
@@ -245,10 +292,10 @@ export default function AuditRequest() {
                     {createAuditMutation.isPending ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Submitting...
+                        Processing...
                       </>
                     ) : (
-                      "Request Your Audit"
+                      `Proceed to Payment - ₦${formData.auditType === 'basic' ? '250' : formData.auditType === 'authority_engine' ? '5,000' : '2,500'}`
                     )}
                   </Button>
 
@@ -259,6 +306,10 @@ export default function AuditRequest() {
                       </p>
                     </div>
                   )}
+                  
+                  <p className="text-xs text-center text-muted-foreground">
+                    Secure payment powered by Flutterwave. Your data is encrypted and protected.
+                  </p>
                 </form>
               </CardContent>
             </Card>
