@@ -1,0 +1,52 @@
+name: Industrial Authority Backend
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Run every hour to process audits and send notifications
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  process-audits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Process Audit Requests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          OWNER_EMAIL: freelankarxteam@gmail.com
+        run: |
+          node scripts/process-audits.js
+
+      - name: Score Leads
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/score-leads.js
+
+      - name: Send Email Notifications
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        run: |
+          node scripts/send-notifications.js
+
+      - name: Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git commit -m "chore: automated audit processing" || echo "No changes to commit"
+          git push || echo "Nothing to push"
