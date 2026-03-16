@@ -30,8 +30,8 @@ export interface PaymentPayload {
   };
 }
 
-const FLUTTERWAVE_PUBLIC_KEY = import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY || 'FLW-SANDBOX-KEY';
-const FLUTTERWAVE_SECRET_KEY = import.meta.env.VITE_FLUTTERWAVE_SECRET_KEY || 'FLUTTERWAVE-SECRET';
+const FLUTTERWAVE_PUBLIC_KEY = import.meta.env.VITE_FLUTTERWAVE_PUBLIC_KEY;
+const FLUTTERWAVE_SECRET_KEY = import.meta.env.VITE_FLUTTERWAVE_SECRET_KEY;
 
 export const flutterwaveConfig: FlutterwaveConfig = {
   publicKey: FLUTTERWAVE_PUBLIC_KEY,
