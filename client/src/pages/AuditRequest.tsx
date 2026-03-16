@@ -3,12 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { initializeFlutterwavePayment, generateTransactionRef } from "@/services/flutterwave";
+import { getUserGeoInfo, getExchangeRates, formatCurrency } from "@/services/currency";
 import { toast } from "sonner";
 
 export default function AuditRequest() {
@@ -29,7 +29,30 @@ export default function AuditRequest() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [currency, setCurrency] = useState("USD");
+  const [exchangeRates, setExchangeRates] = useState<Record<string, number>>({ USD: 1, NGN: 1500 });
+  const [loadingCurrency, setLoadingCurrency] = useState(true);
+
   const createAuditMutation = trpc.audits.create.useMutation();
+
+  // Load user's currency and exchange rates
+  useEffect(() => {
+    async function loadCurrencyData() {
+      setLoadingCurrency(true);
+      try {
+        const geo = await getUserGeoInfo();
+        setCurrency(geo.currency);
+        
+        const rates = await getExchangeRates("USD");
+        setExchangeRates(rates);
+      } catch (error) {
+        console.error("Failed to load currency data:", error);
+      } finally {
+        setLoadingCurrency(false);
+      }
+    }
+    loadCurrencyData();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,34 +63,36 @@ export default function AuditRequest() {
     setFormData((prev) => ({ ...prev, auditType: value }));
   };
 
+  const pricesUSD: Record<string, number> = {
+    basic: 250,
+    authority_engine: 5000,
+    ongoing: 2500,
+  };
+
+  const getConvertedPrice = (type: string) => {
+    const priceUSD = pricesUSD[type] || 250;
+    const rate = exchangeRates[currency] || 1;
+    return priceUSD * rate;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
     if (!formData.companyName || !formData.companyEmail || !formData.industry) {
       toast.error("Please fill in all required fields");
       return;
     }
 
     try {
-      // First save the audit request
       await createAuditMutation.mutateAsync(formData);
       
-      // Get audit price
-      const prices: Record<string, number> = {
-        basic: 250,
-        authority_engine: 5000,
-        ongoing: 2500,
-      };
-      
-      const price = prices[formData.auditType] || 250;
+      const convertedPrice = getConvertedPrice(formData.auditType);
       const txRef = generateTransactionRef();
       
-      // Initialize Flutterwave payment
       const paymentPayload = {
         tx_ref: txRef,
-        amount: price,
-        currency: "NGN",
+        amount: Math.round(convertedPrice * 100) / 100, // Ensure proper decimal places
+        currency: currency,
         payment_options: "card,ussd,bank_transfer,mobilemoney",
         customer: {
           email: formData.companyEmail,
@@ -76,25 +101,26 @@ export default function AuditRequest() {
         },
         customizations: {
           title: "Industrial Authority",
-          description: `${formData.auditType.replace(/_/g, " ")} - ${formData.companyName}`,
+          description: `${formData.auditType.replace(/_/g, " ").toUpperCase()} - ${formData.companyName}`,
           logo: "https://industrial-authority.github.io/industrial-authority/assets/logo.png",
         },
         meta: {
           auditType: formData.auditType,
           companyName: formData.companyName,
           industry: formData.industry,
+          originalPriceUSD: pricesUSD[formData.auditType],
+          exchangeRate: exchangeRates[currency],
         },
       };
       
-      // Save audit data and trigger payment
       localStorage.setItem('pendingAudit', JSON.stringify({
         ...formData,
-        price,
+        price: convertedPrice,
+        currency: currency,
         txRef,
         createdAt: new Date().toISOString(),
       }));
       
-      // Initialize payment
       initializeFlutterwavePayment(paymentPayload);
       
     } catch (error) {
@@ -103,15 +129,8 @@ export default function AuditRequest() {
     }
   };
 
-  const auditPrices = {
-    basic: "$250",
-    authority_engine: "$5,000",
-    ongoing: "$2,500/month",
-  };
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
@@ -168,10 +187,8 @@ export default function AuditRequest() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Company Information */}
                   <div className="space-y-4">
                     <h3 className="font-semibold text-lg">Company Information</h3>
-
                     <div className="space-y-2">
                       <Label htmlFor="companyName">Company Name *</Label>
                       <Input
@@ -184,7 +201,6 @@ export default function AuditRequest() {
                         className="bg-input border-border"
                       />
                     </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="companyEmail">Email Address *</Label>
@@ -199,7 +215,6 @@ export default function AuditRequest() {
                           className="bg-input border-border"
                         />
                       </div>
-
                       <div className="space-y-2">
                         <Label htmlFor="companyPhone">Phone Number</Label>
                         <Input
@@ -213,7 +228,6 @@ export default function AuditRequest() {
                         />
                       </div>
                     </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="companyWebsite">Website</Label>
@@ -227,25 +241,23 @@ export default function AuditRequest() {
                           className="bg-input border-border"
                         />
                       </div>
-
                       <div className="space-y-2">
-                        <Label htmlFor="industry">Industry</Label>
+                        <Label htmlFor="industry">Industry *</Label>
                         <Input
                           id="industry"
                           name="industry"
                           value={formData.industry}
                           onChange={handleInputChange}
                           placeholder="Manufacturing, Logistics, etc."
+                          required
                           className="bg-input border-border"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Audit Type Selection */}
                   <div className="space-y-4">
                     <h3 className="font-semibold text-lg">Select Your Audit Type</h3>
-
                     <div className="space-y-2">
                       <Label htmlFor="auditType">Audit Type *</Label>
                       <Select value={formData.auditType} onValueChange={handleSelectChange}>
@@ -255,19 +267,19 @@ export default function AuditRequest() {
                         <SelectContent>
                           <SelectItem value="basic">
                             <div>
-                              <p className="font-semibold">Digital Capability Audit - {auditPrices.basic}</p>
+                              <p className="font-semibold">Digital Capability Audit - {formatCurrency(pricesUSD.basic, 'USD')}</p>
                               <p className="text-xs text-muted-foreground">Identify red flags and vulnerabilities</p>
                             </div>
                           </SelectItem>
                           <SelectItem value="authority_engine">
                             <div>
-                              <p className="font-semibold">Authority Engine - {auditPrices.authority_engine}</p>
+                              <p className="font-semibold">Authority Engine - {formatCurrency(pricesUSD.authority_engine, 'USD')}</p>
                               <p className="text-xs text-muted-foreground">Complete digital transformation</p>
                             </div>
                           </SelectItem>
                           <SelectItem value="ongoing">
                             <div>
-                              <p className="font-semibold">Ongoing Authority - {auditPrices.ongoing}</p>
+                              <p className="font-semibold">Ongoing Authority - {formatCurrency(pricesUSD.ongoing, 'USD')}/mo</p>
                               <p className="text-xs text-muted-foreground">Monthly optimization & support</p>
                             </div>
                           </SelectItem>
@@ -277,17 +289,27 @@ export default function AuditRequest() {
 
                     <div className="bg-accent/10 border border-accent/30 rounded-lg p-4">
                       <p className="text-sm font-semibold text-accent mb-2">Selected: {formData.auditType.replace(/_/g, " ").toUpperCase()}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Price: <span className="font-semibold text-foreground">{auditPrices[formData.auditType]}</span>
-                      </p>
+                      <div className="flex justify-between items-center">
+                        <p className="text-sm text-muted-foreground">
+                          Base Price: <span className="font-semibold text-foreground">{formatCurrency(pricesUSD[formData.auditType], 'USD')}</span>
+                        </p>
+                        {loadingCurrency ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-accent" />
+                        ) : (
+                          currency !== 'USD' && (
+                            <p className="text-sm text-muted-foreground">
+                              Estimated Total: <span className="font-semibold text-accent">{formatCurrency(getConvertedPrice(formData.auditType), currency)}</span>
+                            </p>
+                          )
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Submit Button */}
                   <Button
                     type="submit"
-                    disabled={createAuditMutation.isPending}
-                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-11"
+                    disabled={createAuditMutation.isPending || loadingCurrency}
+                    className="w-full bg-accent hover:bg-accent/90 text-accent-foreground h-11 text-lg font-bold"
                   >
                     {createAuditMutation.isPending ? (
                       <>
@@ -295,18 +317,10 @@ export default function AuditRequest() {
                         Processing...
                       </>
                     ) : (
-                      `Proceed to Payment - ₦${formData.auditType === 'basic' ? '250' : formData.auditType === 'authority_engine' ? '5,000' : '2,500'}`
+                      `Proceed to Payment - ${formatCurrency(getConvertedPrice(formData.auditType), currency)}`
                     )}
                   </Button>
 
-                  {createAuditMutation.isError && (
-                    <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
-                      <p className="text-sm text-destructive">
-                        Error: {createAuditMutation.error?.message || "Failed to submit audit request"}
-                      </p>
-                    </div>
-                  )}
-                  
                   <p className="text-xs text-center text-muted-foreground">
                     Secure payment powered by Flutterwave. Your data is encrypted and protected.
                   </p>
