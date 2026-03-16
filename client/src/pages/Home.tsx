@@ -4,7 +4,6 @@ import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-import Marquee from "react-fast-marquee"; // Import Marquee component
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -62,7 +61,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
@@ -130,15 +129,21 @@ export default function Home() {
       </section>
 
       {/* Marquee Section */}
-      <section className="py-16 bg-card border-y border-border relative">
+      <section className="py-16 bg-card border-y border-border overflow-hidden relative">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <Marquee gradient={false} speed={40}>
-          <div className="flex gap-12 items-center pr-12">
+        <div className="flex whitespace-nowrap marquee-container">
+          <div className="flex animate-marquee gap-12 items-center pr-12">
             {marqueeItems.map((text, i) => (
               <MarqueeItemComponent key={i} text={text} />
             ))}
+            {marqueeItems.map((text, i) => (
+              <MarqueeItemComponent key={`duplicate-${i}`} text={text} />
+            ))}
+            {marqueeItems.map((text, i) => (
+              <MarqueeItemComponent key={`duplicate2-${i}`} text={text} />
+            ))} {/* Duplicate content for seamless loop */}
           </div>
-        </Marquee>
+        </div>
       </section>
 
       {/* Services Section */}
@@ -247,19 +252,23 @@ export default function Home() {
 
       {/* CSS Animations */}
       <style>{`
-        /* Remove custom marquee-slow animation */
-        /* @keyframes marquee-slow {
+        .marquee-container {
+          overflow: hidden;
+        }
+
+        .marquee-container .animate-marquee {
+          animation: marquee 40s linear infinite;
+          width: max-content; /* Ensure content takes up full width */
+        }
+
+        @keyframes marquee {
           0% {
             transform: translateX(0%);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translateX(-50%); /* Adjust to half the content width for seamless loop */
           }
         }
-
-        .animate-marquee-slow {
-          animation: marquee-slow 40s linear infinite;
-        } */
 
         @keyframes fadeInUp {
           from {
