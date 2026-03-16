@@ -24,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 px-8 border border-border rounded-lg bg-background flex-shrink-0"> {/* Removed explicit width and margin-right, relying on Marquee's gap and internal padding */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 px-8 border border-border rounded-lg bg-background flex-shrink-0 whitespace-nowrap"> {/* Removed min-w, relying on content width and Marquee's gap */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -132,7 +132,7 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <Marquee gradient={false} speed={40} className="py-4" gap={160}> {/* Increased gap to 160 */}
+        <Marquee gradient={false} speed={40} className="py-4" gap={100}> {/* Adjusted gap to 100 */}
           {marqueeItems.map((text, i) => (
             <MarqueeItemComponent key={i} text={text} />
           ))}
