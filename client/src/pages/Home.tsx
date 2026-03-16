@@ -24,9 +24,10 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 mr-24"> {/* Added mr-24 for spacing */}
-      <CheckCircle className="w-6 h-6 text-accent" /> {text}
-    </span>
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 mx-12"> {/* Use mx-12 for horizontal margin */}
+      <CheckCircle className="w-6 h-6 text-accent" />
+      <span>{text}</span>
+    </div>
   );
 
   return (
@@ -115,7 +116,7 @@ export default function Home() {
             {/* Right Image */}
             <div className="relative h-[500px] rounded-2xl overflow-hidden group shadow-2xl border border-border/50">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp\"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp\" 
                 alt="Industrial facility"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
