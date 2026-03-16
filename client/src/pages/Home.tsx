@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-import Marquee from "react-fast-marquee"; // Import Marquee component
+import Marquee from "react-fast-marquee";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -24,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 mx-12"> {/* Use mx-12 for horizontal margin */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background min-w-[500px]"> {/* Increased min-width and horizontal padding for spacing */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -116,7 +116,7 @@ export default function Home() {
             {/* Right Image */}
             <div className="relative h-[500px] rounded-2xl overflow-hidden group shadow-2xl border border-border/50">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp\" 
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp" 
                 alt="Industrial facility"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -131,9 +131,9 @@ export default function Home() {
       </section>
 
       {/* Marquee Section */}
-      <section className="py-16 bg-card border-y border-border relative">
+      <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <Marquee gradient={false} speed={40}>
+        <Marquee gradient={false} speed={40} className="py-4" gap={100}> {/* Added vertical padding to Marquee component and increased gap */}
           {marqueeItems.map((text, i) => (
             <MarqueeItemComponent key={i} text={text} />
           ))}
