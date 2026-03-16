@@ -1,10 +1,11 @@
+
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState } = "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-import Marquee from "react-fast-marquee"; // Import react-fast-marquee
+import Marquee from "react-fast-marquee";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -21,10 +22,13 @@ export default function Home() {
     "Digital Authority Engine",
     "Lead Friction Elimination",
     "RFP Compliance Check",
+    "Searchability Analysis",
+    "Social Proof Review",
+    "Conversion Friction Audit",
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 px-8 border border-border rounded-lg bg-background flex-shrink-0 whitespace-nowrap"> {/* Removed min-w, relying on content width and Marquee's gap */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 border border-border rounded-lg bg-background whitespace-nowrap p-4"> {/* Simplified padding */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -132,7 +136,7 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <Marquee gradient={false} speed={40} className="py-4" gap={100}> {/* Adjusted gap to 100 */}
+        <Marquee gradient={false} speed={40} className="py-4" gap={40}>
           {marqueeItems.map((text, i) => (
             <MarqueeItemComponent key={i} text={text} />
           ))}
@@ -164,7 +168,7 @@ export default function Home() {
                 <div className="flex items-center gap-3 text-base font-medium">
                   <CheckCircle className="w-5 h-5 text-accent" />
                   <span>Searchability Analysis</span>
-                }
+                </div>
                 <div className="flex items-center gap-3 text-base font-medium">
                   <CheckCircle className="w-5 h-5 text-accent" />
                   <span>Social Proof Review</span>
@@ -172,6 +176,7 @@ export default function Home() {
                 <div className="flex items-center gap-3 text-base font-medium">
                   <CheckCircle className="w-5 h-5 text-accent" />
                   <span>Conversion Friction Audit</span>
+                動
                 </div>
               </div>
               <div className="mt-auto pt-8 border-t border-border/50">
@@ -231,37 +236,92 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3 text-base font-medium">
                   <CheckCircle className="w-5 h-5 text-accent" />
-                  <span>Performance Tracking</span>
+                  <span>Performance Analytics</span>
                 </div>
               </div>
               <div className="mt-auto pt-8 border-t border-border/50">
-                <div className="text-3xl font-extrabold text-accent">$2,500<span className="text-lg font-bold text-muted-foreground">/mo</span></div>
-                <p className="text-sm text-muted-foreground mt-1 font-bold">Monthly optimization</p>
+                <div className="text-3xl font-extrabold text-accent">$1,500/mo</div>
+                <p className="text-sm text-muted-foreground mt-1 font-bold">Billed monthly</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+      {/* Audit Section */}
+      <section id="audit" className="py-24 bg-card border-y border-border">
+        <div className="container">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Image */}
+            <div className="relative h-[500px] rounded-2xl overflow-hidden group shadow-2xl border border-border/50">
+              <img
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/audit-report-mockup-VABhVmjWtXcb7jtP49iF8r.webp"
+                alt="Audit report mockup"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
 
-        .animate-in {
-          animation: fadeInUp 0.8s ease-out;
-        }
+            {/* Right Content */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="inline-block px-4 py-2 rounded-full bg-accent/15 border border-accent/40">
+                  <span className="text-sm font-bold text-accent tracking-wide uppercase">The Red Flag Report</span>
+                </div>
+                <h2 className="text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
+                  Uncover the Hidden Risks in Your Digital Presence
+                </h2>
+                <p className="text-xl text-muted-foreground max-w-lg leading-relaxed font-medium">
+                  Our Digital Capability Audit is a comprehensive, data-driven analysis of your entire digital footprint. We identify the exact "Red Flags" that cause procurement officers to hesitate, giving you a clear roadmap for improvement.
+                </p>
+              </div>
 
-        /* Removed custom marquee CSS, relying on react-fast-marquee */
-      `}</style>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-accent flex-shrink-0 flex items-center justify-center mt-1">
+                    <span className="font-bold text-accent-foreground">1</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Searchability & SEO</h4>
+                    <p className="text-muted-foreground">Can procurement officers find you for the right keywords? We analyze your search engine ranking and visibility.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-accent flex-shrink-0 flex items-center justify-center mt-1">
+                    <span className="font-bold text-accent-foreground">2</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Social Proof & Reputation</h4>
+                    <p className="text-muted-foreground">What do your online reviews, testimonials, and case studies say about you? We assess your digital reputation.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-accent flex-shrink-0 flex items-center justify-center mt-1">
+                    <span className="font-bold text-accent-foreground">3</span>
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold">Website & Conversion</h4>
+                    <p className="text-muted-foreground">Is your website professional, easy to navigate, and designed to convert visitors into leads? We audit your user experience.</p>
+                  </div>
+                </div>
+              </div>
+
+              <Link href="/audit-request">
+                <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground group h-14 px-8 text-lg font-bold shadow-lg shadow-accent/20">
+                  Get Your Audit for $250
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 bg-background">
+        <div className="container text-center text-muted-foreground">
+          <p>&copy; {new Date().getFullYear()} Industrial Authority. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
