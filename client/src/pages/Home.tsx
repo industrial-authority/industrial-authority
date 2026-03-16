@@ -24,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 px-8 border border-border rounded-lg bg-background flex-shrink-0 min-w-[600px]"> {/* Increased min-w to 600px */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 px-8 border border-border rounded-lg bg-background flex-shrink-0"> {/* Removed explicit width and margin-right, relying on Marquee's gap and internal padding */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -63,7 +63,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
