@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
+import Marquee from "react-fast-marquee"; // Import Marquee component
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -15,8 +16,21 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const marqueeItems = [
+    "Procurement Readiness Audit",
+    "Digital Authority Engine",
+    "Lead Friction Elimination",
+    "RFP Compliance Check",
+  ];
+
+  const MarqueeItemComponent = ({ text }: { text: string }) => (
+    <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 px-4">
+      <CheckCircle className="w-6 h-6 text-accent" /> {text}
+    </span>
+  );
+
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container flex items-center justify-between h-16">
@@ -48,7 +62,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url('https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp')",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
@@ -116,47 +130,15 @@ export default function Home() {
       </section>
 
       {/* Marquee Section */}
-      <section className="py-16 bg-card border-y border-border overflow-hidden relative">
+      <section className="py-16 bg-card border-y border-border relative">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="relative flex whitespace-nowrap overflow-hidden">
-          <div className="animate-marquee flex gap-12 items-center">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex gap-12 items-center px-4">
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Procurement Readiness Audit
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Digital Authority Engine
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Lead Friction Elimination
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> RFP Compliance Check
-                </span>
-              </div>
+        <Marquee gradient={false} speed={40}>
+          <div className="flex gap-12 items-center pr-12">
+            {marqueeItems.map((text, i) => (
+              <MarqueeItemComponent key={i} text={text} />
             ))}
           </div>
-          {/* Second copy for seamless loop */}
-          <div className="animate-marquee flex gap-12 items-center absolute top-0 left-full">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex gap-12 items-center px-4">
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Procurement Readiness Audit
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Digital Authority Engine
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> Lead Friction Elimination
-                </span>
-                <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3">
-                  <CheckCircle className="w-6 h-6 text-accent" /> RFP Compliance Check
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+        </Marquee>
       </section>
 
       {/* Services Section */}
@@ -261,66 +243,23 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-card py-20 border-t border-border">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
-                  <span className="text-accent-foreground font-bold text-lg">IA</span>
-                </div>
-                <span className="font-bold text-xl">Industrial Authority</span>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                We help industrial firms secure big contracts by eliminating digital red flags and building procurement-ready authority.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold text-lg mb-6">Services</h4>
-              <ul className="space-y-3 text-sm text-muted-foreground font-medium">
-                <li><a href="#" className="hover:text-accent transition-colors">Digital Audit</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Authority Engine</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Ongoing Support</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-lg mb-6">Company</h4>
-              <ul className="space-y-3 text-sm text-muted-foreground font-medium">
-                <li><a href="#" className="hover:text-accent transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Privacy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-lg mb-6">Contact</h4>
-              <p className="text-sm text-muted-foreground font-medium">
-                <a href="mailto:contact@industrialauthority.com" className="hover:text-accent transition-colors">contact@industrialauthority.com</a>
-              </p>
-            </div>
-          </div>
-          <div className="border-t border-border/50 pt-8 text-center text-sm text-muted-foreground font-medium">
-            <p>&copy; 2026 Industrial Authority. All rights reserved. | Built by Olamilekan</p>
-          </div>
-        </div>
       </footer>
 
       {/* CSS Animations */}
       <style>{`
-        @keyframes marquee {
+        /* Remove custom marquee-slow animation */
+        /* @keyframes marquee-slow {
           0% {
-            transform: translateX(0);
+            transform: translateX(0%);
           }
           100% {
-            transform: translateX(-100%);
+            transform: translateX(-50%);
           }
         }
 
-        .animate-marquee {
-          animation: marquee 40s linear infinite;
-        }
+        .animate-marquee-slow {
+          animation: marquee-slow 40s linear infinite;
+        } */
 
         @keyframes fadeInUp {
           from {
