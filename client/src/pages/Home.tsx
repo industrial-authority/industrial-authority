@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
+// import Marquee from "react-fast-marquee"; // Removed react-fast-marquee
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -23,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background min-w-[450px]">
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap py-4 border border-border rounded-lg bg-background px-8 min-w-[350px]"> {/* Added min-w and px for better spacing */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -119,7 +120,6 @@ export default function Home() {
                 alt="Industrial facility"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 p-6 bg-background/60 backdrop-blur-md rounded-xl border border-white/10">
                 <p className="text-sm font-bold text-accent uppercase tracking-widest mb-2">Market Insight</p>
                 <p className="text-lg font-bold text-foreground leading-snug">"Digital authority is no longer optional in industrial procurement."</p>
@@ -132,13 +132,12 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="flex marquee-content gap-12"> {/* Increased gap to gap-12 */}
-          {marqueeItems.map((text, i) => (
-            <MarqueeItemComponent key={i} text={text} />
-          ))}
-          {marqueeItems.map((text, i) => (
-            <MarqueeItemComponent key={`duplicate-${i}`} text={text} />
-          ))}
+        <div className="marquee-container">
+          <div className="marquee-content">
+            {[...marqueeItems, ...marqueeItems].map((text, i) => (
+              <MarqueeItemComponent key={i} text={text} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -263,15 +262,21 @@ export default function Home() {
           animation: fadeInUp 0.8s ease-out;
         }
 
-        .marquee-content {
-          display: flex;
-          animation: marquee 20s linear infinite;
-          width: 4528px; /* Corrected width: (4 * 530px) + (3 * 48px) = 2120px + 144px = 2264px * 2 = 4528px */
+        .marquee-container {
+          overflow: hidden;
+          white-space: nowrap;
+          position: relative;
         }
 
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-2264px); } /* Move by one full set width */
+        .marquee-content {
+          display: inline-flex;
+          animation: marquee-scroll 20s linear infinite;
+          gap: 96px; /* Increased gap here */
+        }
+
+        @keyframes marquee-scroll {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-100%); } /* Changed to -100% */
         }
       `}</style>
     </div>
