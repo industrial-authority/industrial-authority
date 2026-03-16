@@ -5,10 +5,13 @@ const path = require("path");
 
 console.log("--- Starting audit processing script ---");
 
-const DATA_DIR = path.join(__dirname, "../data");
+// Use process.cwd() to resolve paths relative to the repository root
+const REPO_ROOT = process.cwd();
+const DATA_DIR = path.join(REPO_ROOT, "data");
 const AUDITS_FILE = path.join(DATA_DIR, "audits.json");
 const PAYMENTS_FILE = path.join(DATA_DIR, "payments.json");
 
+console.log(`REPO_ROOT: ${REPO_ROOT}`);
 console.log(`DATA_DIR: ${DATA_DIR}`);
 console.log(`AUDITS_FILE: ${AUDITS_FILE}`);
 console.log(`PAYMENTS_FILE: ${PAYMENTS_FILE}`);
@@ -39,23 +42,25 @@ try {
 
   // Read existing data
   console.log("Reading existing data...");
-  let auditsData;
-  let paymentsData;
+  let auditsData = { audits: [] };
+  let paymentsData = { payments: [] };
 
   try {
     const auditsContent = fs.readFileSync(AUDITS_FILE, "utf8").trim();
-    auditsData = auditsContent ? JSON.parse(auditsContent) : { audits: [] };
+    if (auditsContent) {
+      auditsData = JSON.parse(auditsContent);
+    }
   } catch (e) {
     console.error(`Error parsing audits file: ${e.message}`);
-    auditsData = { audits: [] };
   }
 
   try {
     const paymentsContent = fs.readFileSync(PAYMENTS_FILE, "utf8").trim();
-    paymentsData = paymentsContent ? JSON.parse(paymentsContent) : { payments: [] };
+    if (paymentsContent) {
+      paymentsData = JSON.parse(paymentsContent);
+    }
   } catch (e) {
     console.error(`Error parsing payments file: ${e.message}`);
-    paymentsData = { payments: [] };
   }
 
   const audits = auditsData.audits || [];
