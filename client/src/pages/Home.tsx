@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-// import Marquee from "react-fast-marquee"; // Removed react-fast-marquee
+import Marquee from "react-fast-marquee"; // Import react-fast-marquee
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -24,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap py-4 border border-border rounded-lg bg-background px-8 min-w-[350px]"> {/* Added min-w and px for better spacing */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap py-4 border border-border rounded-lg bg-background px-8"> {/* Removed min-w and explicit px, relying on Marquee's gap */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -132,13 +132,11 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="marquee-container">
-          <div className="marquee-content">
-            {[...marqueeItems, ...marqueeItems].map((text, i) => (
-              <MarqueeItemComponent key={i} text={text} />
-            ))}
-          </div>
-        </div>
+        <Marquee gradient={false} speed={40} className="py-4" gap={128}> {/* Increased gap to 128 */}
+          {marqueeItems.map((text, i) => (
+            <MarqueeItemComponent key={i} text={text} />
+          ))}
+        </Marquee>
       </section>
 
       {/* Services Section */}
@@ -262,22 +260,7 @@ export default function Home() {
           animation: fadeInUp 0.8s ease-out;
         }
 
-        .marquee-container {
-          overflow: hidden;
-          white-space: nowrap;
-          position: relative;
-        }
-
-        .marquee-content {
-          display: inline-flex;
-          animation: marquee-scroll 20s linear infinite;
-          gap: 96px; /* Increased gap here */
-        }
-
-        @keyframes marquee-scroll {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-100%); } /* Changed to -100% */
-        }
+        /* Removed custom marquee CSS, relying on react-fast-marquee */
       `}</style>
     </div>
   );
