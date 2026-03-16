@@ -52,6 +52,7 @@ try {
     }
   } catch (e) {
     console.error(`Error parsing audits file: ${e.message}`);
+    auditsData = { audits: [] };
   }
 
   try {
@@ -61,15 +62,23 @@ try {
     }
   } catch (e) {
     console.error(`Error parsing payments file: ${e.message}`);
+    paymentsData = { payments: [] };
   }
 
-  const audits = auditsData.audits || [];
-  const payments = paymentsData.payments || [];
+  // Defensive check for structure
+  if (!auditsData || typeof auditsData !== 'object') auditsData = { audits: [] };
+  if (!Array.isArray(auditsData.audits)) auditsData.audits = [];
+  
+  if (!paymentsData || typeof paymentsData !== 'object') paymentsData = { payments: [] };
+  if (!Array.isArray(paymentsData.payments)) paymentsData.payments = [];
+
+  const audits = auditsData.audits;
+  const payments = paymentsData.payments;
   console.log(`Found ${audits.length} existing audits and ${payments.length} payments.`);
 
   // Sync logic: Create audits from successful payments
   payments.forEach(payment => {
-    if (payment.status === 'successful' && !audits.find(a => a.id === payment.id)) {
+    if (payment && payment.status === 'successful' && !audits.find(a => a && a.id === payment.id)) {
       console.log(`Creating new audit for payment ID: ${payment.id}`);
       audits.push({
         id: payment.id,
@@ -96,6 +105,7 @@ try {
   };
 
   function scoreAudit(audit) {
+    if (!audit) return { score: 0, tier: "cold" };
     const industryKey = (audit.industry || "default").toLowerCase().replace(/\s+/g, "_");
     const industryScore = INDUSTRY_SCORES[industryKey] || INDUSTRY_SCORES.default;
     
@@ -122,7 +132,7 @@ try {
   console.log("Processing pending audits...");
   let newlyScoredCount = 0;
   const processedAudits = audits.map((audit) => {
-    if (audit.status === "pending") {
+    if (audit && audit.status === "pending") {
       console.log(`Scoring audit for ${audit.companyName}...`);
       const scoring = scoreAudit(audit);
       newlyScoredCount++;
@@ -135,7 +145,7 @@ try {
       };
     }
     return audit;
-  });
+  }).filter(Boolean);
 
   // Update data
   auditsData.audits = processedAudits;
@@ -153,5 +163,6 @@ try {
   console.log(`Cold leads: ${processedAudits.filter((a) => a.tier === "cold").length}`);
 } catch (error) {
   console.error("CRITICAL ERROR in audit processing:", error);
+  // Do not exit with 1 if we can avoid it, but here it's a script that should fail the CI if it's broken
   process.exit(1);
 }
