@@ -23,7 +23,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background"> {/* Removed min-w and margin-right */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background min-w-[450px]">
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -62,7 +62,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\')",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
@@ -132,7 +132,7 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <div className="flex marquee-content gap-10"> {/* Added gap-10 */}
+        <div className="flex marquee-content gap-12"> {/* Increased gap to gap-12 */}
           {marqueeItems.map((text, i) => (
             <MarqueeItemComponent key={i} text={text} />
           ))}
@@ -266,12 +266,12 @@ export default function Home() {
         .marquee-content {
           display: flex;
           animation: marquee 20s linear infinite;
-          width: max-content; /* Allow content to determine width */
+          width: 4528px; /* Corrected width: (4 * 530px) + (3 * 48px) = 2120px + 144px = 2264px * 2 = 4528px */
         }
 
         @keyframes marquee {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); } /* Move by 50% of its own width */
+          100% { transform: translateX(-2264px); } /* Move by one full set width */
         }
       `}</style>
     </div>
