@@ -2,7 +2,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
-import { useEffect, useState } = "react";
+import { useEffect, useState } from "react";
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
 import Marquee from "react-fast-marquee";
@@ -28,7 +28,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 border border-border rounded-lg bg-background whitespace-nowrap p-4"> {/* Simplified padding */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 border border-border rounded-lg bg-background p-4"> {/* Removed min-w and mr-10 */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -67,7 +67,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\')",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
