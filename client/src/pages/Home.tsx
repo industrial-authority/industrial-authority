@@ -24,7 +24,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 px-4">
+    <span className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 mr-24"> {/* Added mr-24 for spacing */}
       <CheckCircle className="w-6 h-6 text-accent" /> {text}
     </span>
   );
@@ -62,7 +62,7 @@ export default function Home() {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\")",
+            backgroundImage: "url(\'https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/industrial-authority-pattern-VABhVmjWtXcb7jtP49iF8r.webp\')",
             backgroundSize: "cover",
             backgroundPosition: "center",
             transform: `translateY(${scrollY * 0.3}px)`,
@@ -115,7 +115,7 @@ export default function Home() {
             {/* Right Image */}
             <div className="relative h-[500px] rounded-2xl overflow-hidden group shadow-2xl border border-border/50">
               <img
-                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp"
+                src="https://d2xsxph8kpxj0f.cloudfront.net/310519663429849797/PrP2HAoGc2YV6heoDcNCck/hero-industrial-facility-VABhVmjWtXcb7jtP49iF8r.webp\"
                 alt="Industrial facility"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -133,11 +133,9 @@ export default function Home() {
       <section className="py-16 bg-card border-y border-border relative">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
         <Marquee gradient={false} speed={40}>
-          <div className="flex gap-12 items-center pr-12">
-            {marqueeItems.map((text, i) => (
-              <MarqueeItemComponent key={i} text={text} />
-            ))}
-          </div>
+          {marqueeItems.map((text, i) => (
+            <MarqueeItemComponent key={i} text={text} />
+          ))}
         </Marquee>
       </section>
 
