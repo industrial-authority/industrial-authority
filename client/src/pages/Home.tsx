@@ -1,10 +1,9 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Shield, TrendingUp, Zap } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState } => {
 import { getLoginUrl } from "@/const";
 import { Link } from "wouter";
-import Marquee from "react-fast-marquee";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -24,7 +23,7 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background min-w-[600px]"> {/* Increased min-width and horizontal padding for spacing */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap px-10 py-4 border border-border rounded-lg bg-background min-w-[600px] mr-10"> {/* Increased min-w and added margin-right */}
       <CheckCircle className="w-6 h-6 text-accent" />
       <span>{text}</span>
     </div>
@@ -133,11 +132,14 @@ export default function Home() {
       {/* Marquee Section */}
       <section className="py-16 bg-card border-y border-border relative overflow-hidden">
         <div className="absolute inset-0 bg-accent/5 pointer-events-none" />
-        <Marquee gradient={false} speed={40} className="py-4" gap={150}> {/* Increased vertical padding to Marquee component and increased gap */}
+        <div className="flex marquee-content">
           {marqueeItems.map((text, i) => (
             <MarqueeItemComponent key={i} text={text} />
           ))}
-        </Marquee>
+          {marqueeItems.map((text, i) => (
+            <MarqueeItemComponent key={`duplicate-${i}`} text={text} />
+          ))}
+        </div>
       </section>
 
       {/* Services Section */}
@@ -259,6 +261,17 @@ export default function Home() {
 
         .animate-in {
           animation: fadeInUp 0.8s ease-out;
+        }
+
+        .marquee-content {
+          display: flex;
+          animation: marquee 20s linear infinite;
+          width: calc(640px * 8); /* (min-w + mr) * num_items * 2 (for duplication) */
+        }
+
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-2560px); } /* Half of the total width of one set of duplicated items */
         }
       `}</style>
     </div>
