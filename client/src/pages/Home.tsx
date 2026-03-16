@@ -24,9 +24,9 @@ export default function Home() {
   ];
 
   const MarqueeItemComponent = ({ text }: { text: string }) => (
-    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 flex-shrink-0 whitespace-nowrap py-4 border border-border rounded-lg bg-background"> {/* Removed px-8, relying on Marquee's gap */}
+    <div className="text-2xl font-bold text-foreground/80 flex items-center gap-3 py-4 border border-border rounded-lg bg-background"> {/* Removed px-8 and min-w, relying on Marquee's gap */}
       <CheckCircle className="w-6 h-6 text-accent" />
-      <span>{text}</span>
+      <span>{text}</span> {/* Removed px-8 from the span */}
     </div>
   );
 
@@ -241,7 +241,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </footer>
+      </section>
 
       {/* CSS Animations */}
       <style>{`
